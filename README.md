@@ -355,6 +355,10 @@ Aqui está uma estrutura possível para o cronograma, dividindo o tempo total de
 - **Final do Mês 6:** Lançamento do MVP.
 - **Final do Mês 9:** Lançamento da versão final do BookProgress.
 
+  <div align="center">
+    <img src="/imgs/Cronograma.png">
+  </div>
+
 ## 7. Diagramas 
   ### Diagrama de Classe
   <div align="center">
