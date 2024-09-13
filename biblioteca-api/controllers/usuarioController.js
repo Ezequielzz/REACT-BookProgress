@@ -1,6 +1,5 @@
 const Usuario = require('../models/usuario'); // Importa o modelo 'Usuario' do arquivo de modelos
 
-
 // Criar um novo usuario
 exports.criarUsuario = async (req, res) => {
     // Cria uma nova instância do modelo 'Usuario' com os dados recebidos na requisição
@@ -105,43 +104,160 @@ exports.deletarUsuario = async (req, res) => {
 };
 
 
-// Adicionar um livro a um usuário
-exports.adicionarLivroAoUsuario = async (req, res) => {
+
+// Criar um novo livro dentro de um usuário
+exports.criarLivro = async (req, res) => {
+    const { usuarioId } = req.params;
+    const { titulo, autor, genero, paginas } = req.body;
+
     try {
+        // Busca o usuário
+        const usuario = await Usuario.findById(usuarioId);
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuário não encontrado' });
+        }
+
+        // Adiciona o novo livro ao array de livros do usuário
+        const novoLivro = { titulo, autor, genero, paginas };
+        usuario.livros.push(novoLivro);
+        await usuario.save();
+
+        res.status(201).json({ message: 'Livro criado com sucesso', livro: novoLivro });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Criar resenha dentro de um usuário
+exports.criarResenha = async (req, res) => {
+    const { usuarioId, livroId } = req.params;
+    const { conteudo, nota } = req.body;
+
+    try {
+        const usuario = await Usuario.findById(usuarioId);
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuário não encontrado' });
+        }
+
+        // Procura o livro específico no array de livros do usuário
+        const livro = usuario.livros.id(livroId);
+        if (!livro) {
+            return res.status(404).json({ message: 'Livro não encontrado' });
+        }
+
+        // Adiciona uma nova resenha ao livro
+        const novaResenha = { conteudo, nota, data: new Date() };
+        usuario.resenhas.push(novaResenha);
+        await usuario.save();
+
+        res.status(201).json({ message: 'Resenha criada com sucesso', resenha: novaResenha });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Adicionar progresso de leitura dentro de um usuário
+exports.adicionarProgresso = async (req, res) => {
+    const { usuarioId, livroId } = req.params;
+    const { paginasLidas } = req.body;
+
+    try {
+        const usuario = await Usuario.findById(usuarioId);
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuário não encontrado' });
+        }
+
+        // Procura o livro no array de livros do usuário
+        const livro = usuario.livros.id(livroId);
+        if (!livro) {
+            return res.status(404).json({ message: 'Livro não encontrado' });
+        }
+
+        // Adiciona ou atualiza o progresso de leitura
+        const progressoExistente = usuario.progresso.find(p => p.livroId.toString() === livroId);
+        if (progressoExistente) {
+            progressoExistente.paginasLidas = paginasLidas;
+            progressoExistente.dataAtualizacao = new Date();
+        } else {
+            usuario.progresso.push({ livroId, paginasLidas, dataAtualizacao: new Date() });
+        }
+
+        await usuario.save();
+        res.status(201).json({ message: 'Progresso de leitura atualizado com sucesso' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Listar livros de um usuário
+exports.listarLivros = async (req, res) => {
+    const { usuarioId } = req.params;
+
+    try {
+        const usuario = await Usuario.findById(usuarioId);
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuário não encontrado' });
+        }
+
+        res.json(usuario.livros);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Atualizar um livro de um usuário
+exports.atualizarLivro = async (req, res) => {
+    try {
+        // Busca o usuário pelo ID
         const usuario = await Usuario.findById(req.params.usuarioId);
         if (!usuario) {
             return res.status(404).json({ message: 'Usuário não encontrado' });
         }
 
-        const livro = await Livro.findById(req.body.livroId);
+        // Verifica se o livro pertence ao usuário
+        const livro = usuario.livros.id(req.params.livroId);
         if (!livro) {
             return res.status(404).json({ message: 'Livro não encontrado' });
         }
 
-        // Adiciona o livro ao array de livros do usuário
-        usuario.livros.push(livro._id);
-        await usuario.save();
+        // Atualiza os campos do livro
+        if (req.body.titulo != null) {
+            livro.titulo = req.body.titulo;
+        }
+        if (req.body.autor != null) {
+            livro.autor = req.body.autor;
+        }
+        if (req.body.paginas != null) {
+            livro.paginas = req.body.paginas;
+        }
+        if (req.body.genero != null) {
+            livro.genero = req.body.genero;
+        }
 
-        res.json({ message: 'Livro adicionado ao usuário com sucesso', usuario });
+        console.log(req.params.usuarioId, req.params.livroId); // Verificar IDs recebidos
+
+        // Salva o usuário atualizado
+        await usuario.save();
+        res.json({ message: 'Livro atualizado com sucesso', livro });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
 
-// Remover um livro de um usuário
-exports.removerLivroDoUsuario = async (req, res) => {
+// Deletar um livro de um usuário
+exports.deletarLivro = async (req, res) => {
+    const { usuarioId, livroId } = req.params;
+
     try {
-        const usuario = await Usuario.findById(req.params.usuarioId);
+        const usuario = await Usuario.findById(usuarioId);
         if (!usuario) {
             return res.status(404).json({ message: 'Usuário não encontrado' });
         }
 
-        // Remove o livro do array de livros do usuário
-        usuario.livros.pull(req.body.livroId);
+        usuario.livros.id(livroId).deleteOne();
         await usuario.save();
-
-        res.json({ message: 'Livro removido do usuário com sucesso', usuario });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.json({ message: 'Livro deletado com sucesso' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };

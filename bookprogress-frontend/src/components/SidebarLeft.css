@@ -1,0 +1,64 @@
+/* SidebarLeft.css */
+/* src/components/SidebarLeft.css */
+.sidebarL {
+  width: 185px; /* Largura da sidebar esquerda */
+  height: 100vh; /* Altura total da viewport */
+  background-color: #556473;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0; /* Alinha à esquerda */
+  display: flex;
+  flex-direction: column;
+  color: #e9ded3;
+  z-index: 1000; /* Garante que esteja sobre outros elementos */
+}
+
+
+.logo img {
+  width: 200px;
+  margin-bottom: 0;
+}
+
+.icons {
+  width: 50px;
+  height: 50px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul li {
+  margin: 15px 0; /* Ajusta o espaçamento entre os itens */
+}
+
+ul li a {
+  text-decoration: none;
+  color: #e9ded3;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+}
+
+ul li a i {
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+.logout-btn {
+  background-color: #ff8a65;
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 20px;
+  align-self: center;
+}
+
+.logout-btn:hover {
+  background-color: #ff7043;
+}

@@ -1,16 +1,15 @@
 /* src/components/SidebarRight.css */
 .sidebar-right {
-  width: 250px;
-  background-color: #2C3E50;
+  width: 185px; /* Largura da sidebar direita */
+  height: 100vh; /* Altura total da viewport */
+  background-color: #556473;
   color: white;
-  height: 100vh;
   position: fixed;
   top: 0;
-  right: 0;
+  right: 0; /* Alinha à direita */
   padding: 1rem;
-  overflow-y: auto;
-  /* Não cobrir a página completamente, apenas ao lado */
-  z-index: 1000;
+  overflow-y: auto; /* Adiciona rolagem apenas se necessário */
+  z-index: 1000; /* Garante que esteja sobre outros elementos */
 }
 
 .sidebar-right h2 {

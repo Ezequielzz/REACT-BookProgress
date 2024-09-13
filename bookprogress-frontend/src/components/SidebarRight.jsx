@@ -1,37 +1,44 @@
-// src/components/SidebarRight.jsx
 import React, { useEffect, useState } from 'react';
 import './SidebarRight.css';
 
-const SidebarRight = () => {
+const SidebarRight = ({ usuarioId }) => {
   const [livros, setLivros] = useState([]);
 
   useEffect(() => {
-    // Função para buscar livros do backend
     const fetchLivros = async () => {
       try {
-        const response = await fetch('/api/livros');
+        const response = await fetch(`/api/${usuarioId}/livros`); // Use a URL correta para a API
+        if (!response.ok) {
+          throw new Error('Erro ao buscar livros: ' + response.statusText);
+        }
         const data = await response.json();
         setLivros(data);
       } catch (error) {
-        console.error('Erro ao buscar livros:', error);
+        console.error(error.message);
       }
     };
 
-    fetchLivros();
-  }, []);
+    if (usuarioId) {
+      fetchLivros();
+    }
+  }, [usuarioId]);
 
   return (
     <aside className="sidebar-right">
       <h2>Livros Cadastrados</h2>
       <ul>
-        {livros.map((livro) => (
-          <li key={livro._id}>
-            <h3>{livro.titulo}</h3>
-            <p><strong>Autor:</strong> {livro.autor}</p>
-            <p><strong>Gênero:</strong> {livro.genero}</p>
-            <p><strong>Páginas:</strong> {livro.paginas}</p>
-          </li>
-        ))}
+        {livros.length > 0 ? (
+          livros.map((livro) => (
+            <li key={livro._id}>
+              <h3>{livro.titulo}</h3>
+              <p><strong>Autor:</strong> {livro.autor}</p>
+              <p><strong>Gênero:</strong> {livro.genero}</p>
+              <p><strong>Páginas:</strong> {livro.paginas}</p>
+            </li>
+          ))
+        ) : (
+          <p>Sem livros cadastrados.</p>
+        )}
       </ul>
     </aside>
   );

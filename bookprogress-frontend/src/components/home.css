@@ -1,12 +1,14 @@
 /* src/components/Home.css */
 .home {
-  margin-left: 250px; /* Para deixar espaço para a sidebar esquerda */
-  margin-right: 250px; /* Para deixar espaço para a sidebar direita */
+  margin-left: 185px; /* Espaço para a sidebar esquerda */
+  margin-right: 185px; /* Espaço para a sidebar direita */
   padding: 20px;
   background-color: #ecf0f1;
-  min-height: 100vh;
+  min-height: 100vh; /* Garante que a altura mínima cubra a viewport */
+  box-sizing: border-box; /* Inclui padding e border no cálculo da largura e altura */
 }
 
+
 .home h1 {
-  color: #34495e;
+  color: #ff0000;
 }
