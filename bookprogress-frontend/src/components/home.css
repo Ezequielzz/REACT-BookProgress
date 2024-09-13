@@ -1,0 +1,12 @@
+/* src/components/Home.css */
+.home {
+  margin-left: 250px; /* Para deixar espaço para a sidebar esquerda */
+  margin-right: 250px; /* Para deixar espaço para a sidebar direita */
+  padding: 20px;
+  background-color: #ecf0f1;
+  min-height: 100vh;
+}
+
+.home h1 {
+  color: #34495e;
+}

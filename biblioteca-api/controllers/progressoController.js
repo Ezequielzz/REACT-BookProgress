@@ -12,6 +12,17 @@ exports.adicionarProgresso = async (req, res) => {
             return res.status(404).json({ message: 'Usuário não encontrado' });
         }
 
+        // Verifica se o livro existe
+        const livro = await Livro.findById(livroId);
+        if (!livro) {
+            return res.status(404).json({ message: 'Livro não encontrado' });
+        }
+
+        // Verifica se as páginas lidas não excedem o total de páginas do livro
+        if (paginasLidas > livro.paginas) {
+            return res.status(400).json({ message: 'O número de páginas lidas não pode exceder o total de páginas do livro.' });
+        }
+
         // Cria um novo progresso
         const novoProgresso = new Progresso({
             usuarioId,
@@ -41,6 +52,12 @@ exports.atualizarProgresso = async (req, res) => {
         const progresso = await Progresso.findById(progressoId);
         if (!progresso) {
             return res.status(404).json({ error: 'Progresso não encontrado' });
+        }
+
+        // Verifica o livro associado para checar o número de páginas
+        const livro = await Livro.findById(progresso.livroId);
+        if (paginasLidas > livro.paginas) {
+            return res.status(400).json({ message: 'O número de páginas lidas não pode exceder o total de páginas do livro.' });
         }
 
         progresso.paginasLidas = paginasLidas;

@@ -47,9 +47,15 @@ exports.atualizarResenha = async (req, res) => {
             return res.status(404).json({ error: 'Resenha não encontrada' });
         }
 
-        resenha.conteudo = conteudo;
-        resenha.nota = nota;
-        resenha.data = Date.now();
+        // Verifica se o usuário atual é o dono da resenha
+        if (resenha.usuarioId.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: 'Você não tem permissão para editar essa resenha.' });
+        }
+
+        // Atualiza os campos da resenha
+        resenha.conteudo = conteudo || resenha.conteudo;
+        resenha.nota = nota || resenha.nota;
+        resenha.dataAtualizacao = Date.now();  // Mantém a data de atualização separada
 
         const resenhaAtualizada = await resenha.save();
         res.json(resenhaAtualizada);
@@ -57,6 +63,7 @@ exports.atualizarResenha = async (req, res) => {
         res.status(500).json({ error: 'Erro ao atualizar resenha' });
     }
 };
+
 
 // Obter resenhas por livro
 exports.obterResenhasPorLivro = async (req, res) => {
